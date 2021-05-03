@@ -1,0 +1,163 @@
+@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@400;700&family=Squada+One&display=swap');
+
+body {
+  background-color: #3c3c3c;
+  font-family: 'Play', sans-serif;
+  font-family: 'Raleway', sans-serif;
+  color: white;
+}
+
+#controls {
+  border-bottom: 1px groove #777;
+}
+
+/* Toggle tracklist */
+#toggle-tracklist i.fa-caret-square-down {
+  color: white;
+  transform: rotate(180deg);
+  text-shadow: 0 0 6px white;
+  transition: color 0.1s, transform 0.1s, text-shadow 0.1s;
+}
+#toggle-tracklist.collapsed i.fa-caret-square-down {
+  color: #ccc;
+  transform: rotate(0deg);
+  text-shadow: none;
+}
+#toggle-tracklist.collapsed:hover i.fa-caret-square-down {
+  text-shadow: 0 0 3px white;
+}
+
+/* Song info */
+#song-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+#song-info h1 {
+  font-size: 1.3rem;
+  font-weight: bold;
+}
+#song-info h4 {
+  font-size: 1rem;
+}
+#song-info-hud h1, #song-info-hud h4 {
+  font-family: 'Raleway', sans-serif;
+  color: #3c3c3c;
+}
+#song-info-hud h1 {
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+#song-info-hud h4 {
+  font-size: 1rem;
+}
+
+/* Play controls */
+#hud {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  border: 1px groove black;
+  border-radius: 10px;
+  padding: 0.5rem 1rem;
+  background: rgb(152,218,152);
+  background: linear-gradient(180deg, rgba(152,218,152,1) 0%, rgba(104,182,105,1) 35%, rgba(164,247,154,1) 100%);
+}
+#hud input {
+  flex-basis: 100%;
+}
+#toggle-play, #toggle-loop {
+  flex-basis: 25%;
+}
+#timer {
+  flex-basis: 50%;
+}
+#toggle-play.btn-link, #toggle-loop.btn-link {
+  display: inline-block;
+  text-decoration: none;
+  color: #3c3c3c;
+}
+#toggle-play.btn-link:hover, #toggle-loop.btn-link:hover {
+  text-shadow: 0 0 3px #3c3c3c;
+}
+#toggle-play i.fa-play { display: inline-block; }
+#toggle-play.active i.fa-play { display: none; }
+#toggle-play i.fa-pause { display: none; }
+#toggle-play.active i.fa-pause { display: inline-block; }
+#toggle-loop svg {
+  height: 1.7rem;
+}
+#toggle-loop svg path {
+  fill: #3c3c3c;
+}
+#toggle-loop.active svg {
+  filter: drop-shadow(0 0 5px #3c3c3c);
+}
+#timer {
+  color: #3c3c3c;
+  font-family: 'Squada One', sans-serif;
+  font-size: 1.7rem;
+}
+
+/* Volume controls */
+#volume-controls {
+  display: flex;
+  align-items: center;
+}
+#volume-controls #sliders {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+#volume-controls #sliders > div {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+[id*=toggle-volume].btn-link, #reset-speed.btn-link {
+  display: inline-block;
+  text-decoration: none;
+  color: white;
+}
+[id*=toggle-volume].btn-link:hover, #reset-speed.btn-link:hover {
+  text-shadow: 0 0 3px white;
+}
+[id*=toggle-volume] i.fa-volume-up { display: inline-block; }
+[id*=toggle-volume].active i.fa-volume-up { display: none; }
+[id*=toggle-volume] i.fa-volume-mute { display: none; }
+[id*=toggle-volume].active i.fa-volume-mute { display: inline-block; }
+
+/* Tracklist */
+#tracklist {
+  background-color: #2c2c2c;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+.track {
+  display: flex;
+  align-items: center;
+  border: 1px solid black;
+  border-radius: 5px;
+  padding: 1rem;
+  margin-top: 1rem;
+}
+.track-img {
+  align-items: center;
+  justify-content: center;
+}
+.track-img img {
+  width: 80%;
+  max-width: 80px;
+  margin-right: 0.5rem;
+}
+.track-info {
+  flex-grow: 2;
+}
+.track-info h3 {
+  font-size: 1rem;
+  font-weight: bold;
+}
+.track-info h4 {
+  font-size: 0.8rem;
+}

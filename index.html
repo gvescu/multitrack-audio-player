@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Multitrack Audio Player</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" />
+  <link rel="stylesheet" href="css/style.css">
+
+</head>
+<body>
+
+  <div class="container-lg">
+
+    <!-- Controls -->
+    <div class="row py-4 justify-content-center" id="controls">
+      <div class="d-none d-md-flex col-md-3 order-2 order-md-1" id="song-info">
+        <h1></h1>
+        <h4></h4>
+      </div>
+      <div class="col-12 col-md-6 order-1 order-md-2 text-center" id="play-controls">
+        <div id="hud" class="mx-3 mx-md-0">
+          <div id="song-info-hud" class="d-block d-md-none">
+            <h1></h1>
+            <h4></h4>
+          </div>
+          <input type="range" class="form-range" min="0" max="100" step="1" value="0" id="progress-range">
+          <button id="toggle-play" type="button" class="btn btn-link btn-lg" data-bs-toggle="button" title="Play/Pause">
+            <i class="fas fa-play fa-lg"></i>
+            <i class="fas fa-pause fa-lg"></i>
+          </button>
+          <button id="toggle-loop" type="button" class="btn btn-link btn-lg" data-bs-toggle="button" title="Loop">
+            <svg enable-background="new 0 0 511.991 511.991" version="1.1" viewBox="0 0 511.99 511.99" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
+              <path d="m465.45 279.26c-12.87 0-23.273 10.426-23.273 23.273 0 38.493-31.325 69.818-69.818 69.818h-186.18v-69.818c0-8.937-5.143-17.105-13.172-20.969-8.122-3.863-17.641-2.793-24.646 2.793l-116.36 93.091c-5.516 4.422-8.727 11.101-8.727 18.176s3.212 13.754 8.727 18.176l116.36 93.091c4.212 3.351 9.356 5.097 14.545 5.097 3.421 0 6.889-0.768 10.1-2.304 8.029-3.863 13.172-12.032 13.172-20.969v-69.818h186.18c64.163 0 116.36-52.201 116.36-116.36 1e-3 -12.847-10.402-23.273-23.272-23.273z"/>
+              <path d="m46.541 232.72c12.87 0 23.273-10.426 23.273-23.273 0-38.493 31.325-69.818 69.818-69.818h186.18v69.818c0 8.937 5.143 17.105 13.172 20.969 3.235 1.536 6.679 2.304 10.1 2.304 5.19 0 10.333-1.745 14.545-5.097l116.36-93.091c5.516-4.422 8.727-11.101 8.727-18.176s-3.212-13.754-8.727-18.176l-116.36-93.091c-6.982-5.585-16.617-6.656-24.646-2.793s-13.172 12.032-13.172 20.969v69.818h-186.18c-64.163 0-116.36 52.201-116.36 116.36 0 12.847 10.403 23.273 23.273 23.273z"/>
+            </svg>
+          </button>
+          <div id="timer"><span id="progress-string">00:00</span> / <span id="duration-string">05:00</span></div>
+        </div>
+      </div>
+      <div class="col-8 col-md-3 order-3 order-md-3 pt-3 pt-md-0" id="volume-controls">
+        <button id="toggle-tracklist" type="button" class="btn btn-link btn-lg collapsed" data-bs-toggle="collapse" data-bs-target="#tracklist" ttile="Show track list">
+          <i class="far fa-caret-square-down"></i>
+        </button>
+        <div id="sliders">
+          <div>
+            <button id="toggle-volume" type="button" class="btn btn-link btn-lg" data-bs-toggle="button" title="Mute">
+              <i class="fas fa-volume-up"></i>
+              <i class="fas fa-volume-mute"></i>
+            </button>
+            <input type="range" class="form-range" min="0" max="80" step="1" value="80" id="volume-range">
+          </div>
+          <div>
+            <button id="reset-speed" type="button" class="btn btn-link btn-lg" title="Reset speed">
+              <i class="fas fa-forward"></i>
+            </button>
+            <input type="range" class="form-range" min="50" max="150" step="1" value="100" id="speed-range">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Track list -->
+    <div class="row pb-3 row-cols-1 row-cols-md-2 row-cols-lg-4 justify-content-center accordion-collapse collapse" id="tracklist"></div>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
