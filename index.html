@@ -319,14 +319,13 @@
       tracks.forEach(track => {
         let audio = new Audio();
         audio.preload = 'auto';
-        audio.src = track.url;
-        audio.volume = 0.8;
+        audio.volume = volume / 100;
         audio.controls = false;
         audio.autoplay = false;
         audio.addEventListener('loadeddata', () => {
           if (audio.readyState >= 2) {
             if (audio.duration > duration)
-              duration = audio.duration;
+            duration = audio.duration;
             parseDuration();
           }
         });
@@ -342,6 +341,7 @@
             document.getElementById("toggle-play").classList.remove('active');
           }
         });
+        audio.src = track.url;
         audio.load();
         players.push(audio);
       });
