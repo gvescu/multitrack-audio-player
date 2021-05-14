@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Multitrack Audio Player</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Raleway:wght@400;700&family=Squada+One&display=swap');
+
+    body {
+      background-color: #3c3c3c;
+      font-family: 'Play', sans-serif;
+      font-family: 'Raleway', sans-serif;
+      color: white;
+    }
+
+    .container-lg {
+      background-color: #3c3c3c;
+      font-family: 'Play', sans-serif;
+      font-family: 'Raleway', sans-serif;
+      color: white;
+      border-radius: 0.7rem;
+    }
+
+    #controls {
+      border-bottom: 1px groove #777;
+    }
+
+    /* Toggle tracklist */
+    #toggle-tracklist i.fa-caret-square-down {
+      color: white;
+      transform: rotate(180deg);
+      text-shadow: 0 0 6px white;
+      transition: color 0.1s, transform 0.1s, text-shadow 0.1s;
+    }
+    #toggle-tracklist.collapsed i.fa-caret-square-down {
+      color: #ccc;
+      transform: rotate(0deg);
+      text-shadow: none;
+    }
+    #toggle-tracklist.collapsed:hover i.fa-caret-square-down {
+      text-shadow: 0 0 3px white;
+    }
+
+    /* Song info */
+    #song-info {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    #song-info h1 {
+      font-size: 1.3rem;
+      font-weight: bold;
+    }
+    #song-info h4 {
+      font-size: 1rem;
+    }
+    #song-info-hud h1, #song-info-hud h4 {
+      font-family: 'Raleway', sans-serif;
+      color: #3c3c3c;
+    }
+    #song-info-hud h1 {
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+    #song-info-hud h4 {
+      font-size: 1rem;
+    }
+
+    /* Play controls */
+    #hud {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      border: 1px groove black;
+      border-radius: 10px;
+      padding: 0.5rem 1rem;
+      background: rgb(152,218,152);
+      background: linear-gradient(180deg, rgba(152,218,152,1) 0%, rgba(104,182,105,1) 35%, rgba(164,247,154,1) 100%);
+    }
+    #hud input {
+      flex-basis: 100%;
+    }
+    #toggle-play, #toggle-loop {
+      flex-basis: 25%;
+    }
+    #timer {
+      flex-basis: 50%;
+    }
+    #toggle-play.btn-link, #toggle-loop.btn-link {
+      display: inline-block;
+      text-decoration: none;
+      color: #3c3c3c;
+    }
+    #toggle-play.btn-link:hover, #toggle-loop.btn-link:hover {
+      text-shadow: 0 0 3px #3c3c3c;
+    }
+    #toggle-play i.fa-play { display: inline-block; }
+    #toggle-play.active i.fa-play { display: none; }
+    #toggle-play i.fa-pause { display: none; }
+    #toggle-play.active i.fa-pause { display: inline-block; }
+    #toggle-loop svg {
+      height: 1.7rem;
+    }
+    #toggle-loop svg path {
+      fill: #3c3c3c;
+    }
+    #toggle-loop.active svg {
+      filter: drop-shadow(0 0 5px #3c3c3c);
+    }
+    #timer {
+      color: #3c3c3c;
+      font-family: 'Squada One', sans-serif;
+      font-size: 1.7rem;
+    }
+
+    /* Volume controls */
+    #volume-controls {
+      display: flex;
+      align-items: center;
+    }
+    #volume-controls #sliders {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    #volume-controls #sliders > div {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+    }
+    #reset-speed.btn-link {
+      display: inline-block;
+      text-decoration: none;
+      color: white;
+    }
+    #reset-speed.btn-link:hover {
+      text-shadow: 0 0 3px white;
+    }
+    [id*=toggle-volume] svg {
+      height: 1.5rem;
+    }
+    [id*=toggle-volume] svg path {
+      fill: white;
+    }
+    [id*=toggle-volume] svg:hover path {
+      filter: drop-shadow(0 0 3px white);
+    }
+    [id*=toggle-volume] svg.icon-volume { display: inline-block; }
+    [id*=toggle-volume].active svg.icon-volume { display: none; }
+    [id*=toggle-volume] svg.icon-mute { display: none; }
+    [id*=toggle-volume].active svg.icon-mute { display: inline-block; }
+
+    /* Tracklist */
+    #tracklist {
+      background-color: #2c2c2c;
+      border-bottom-left-radius: 10px;
+      border-bottom-right-radius: 10px;
+    }
+    .track {
+      display: flex;
+      align-items: center;
+      border: 1px solid black;
+      border-radius: 5px;
+      padding: 1rem;
+      margin-top: 1rem;
+    }
+    .track-img {
+      align-items: center;
+      justify-content: center;
+    }
+    .track-img img {
+      width: 80%;
+      max-width: 80px;
+      margin-right: 0.5rem;
+    }
+    .track-info {
+      flex-grow: 2;
+    }
+    .track-info h3 {
+      font-size: 1rem;
+      font-weight: bold;
+    }
+    .track-info h4 {
+      font-size: 0.8rem;
+    }
+  </style>
+
+</head>
+<body>
+
+  <div class="container-lg">
+
+    <!-- Controls -->
+    <div class="row py-4 justify-content-center" id="controls">
+      <div class="d-none d-md-flex col-md-3 order-2 order-md-1" id="song-info">
+        <h1></h1>
+        <h4></h4>
+      </div>
+      <div class="col-12 col-md-6 order-1 order-md-2 text-center" id="play-controls">
+        <div id="hud" class="mx-3 mx-md-0">
+          <div id="song-info-hud" class="d-block d-md-none">
+            <h1></h1>
+            <h4></h4>
+          </div>
+          <input type="range" class="form-range" min="0" max="100" step="1" value="0" id="progress-range">
+          <button id="toggle-play" type="button" class="btn btn-link btn-lg" data-bs-toggle="button" title="Play/Pause">
+            <i class="fas fa-play fa-lg"></i>
+            <i class="fas fa-pause fa-lg"></i>
+          </button>
+          <button id="toggle-loop" type="button" class="btn btn-link btn-lg" data-bs-toggle="button" title="Loop">
+            <svg enable-background="new 0 0 511.991 511.991" version="1.1" viewBox="0 0 511.99 511.99" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
+              <path d="m465.45 279.26c-12.87 0-23.273 10.426-23.273 23.273 0 38.493-31.325 69.818-69.818 69.818h-186.18v-69.818c0-8.937-5.143-17.105-13.172-20.969-8.122-3.863-17.641-2.793-24.646 2.793l-116.36 93.091c-5.516 4.422-8.727 11.101-8.727 18.176s3.212 13.754 8.727 18.176l116.36 93.091c4.212 3.351 9.356 5.097 14.545 5.097 3.421 0 6.889-0.768 10.1-2.304 8.029-3.863 13.172-12.032 13.172-20.969v-69.818h186.18c64.163 0 116.36-52.201 116.36-116.36 1e-3 -12.847-10.402-23.273-23.272-23.273z"/>
+              <path d="m46.541 232.72c12.87 0 23.273-10.426 23.273-23.273 0-38.493 31.325-69.818 69.818-69.818h186.18v69.818c0 8.937 5.143 17.105 13.172 20.969 3.235 1.536 6.679 2.304 10.1 2.304 5.19 0 10.333-1.745 14.545-5.097l116.36-93.091c5.516-4.422 8.727-11.101 8.727-18.176s-3.212-13.754-8.727-18.176l-116.36-93.091c-6.982-5.585-16.617-6.656-24.646-2.793s-13.172 12.032-13.172 20.969v69.818h-186.18c-64.163 0-116.36 52.201-116.36 116.36 0 12.847 10.403 23.273 23.273 23.273z"/>
+            </svg>
+          </button>
+          <div id="timer"><span id="progress-string">--:--</span> / <span id="duration-string">--:--</span></div>
+        </div>
+      </div>
+      <div class="col-8 col-md-3 order-3 order-md-3 pt-3 pt-md-0" id="volume-controls">
+        <div id="sliders">
+          <div>
+            <button id="toggle-volume" type="button" class="btn btn-link btn-lg" data-bs-toggle="button" title="Mute">
+              <svg class="icon-volume" xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 24 24"><path d="M18.28 8.37a1 1 0 1 0-1.56 1.26 4 4 0 0 1 0 4.74A1 1 0 0 0 17.5 16a1 1 0 0 0 .78-.37 6 6 0 0 0 0-7.26z"/><path d="M19.64 5.23a1 1 0 1 0-1.28 1.54A6.8 6.8 0 0 1 21 12a6.8 6.8 0 0 1-2.64 5.23 1 1 0 0 0-.13 1.41A1 1 0 0 0 19 19a1 1 0 0 0 .64-.23A8.75 8.75 0 0 0 23 12a8.75 8.75 0 0 0-3.36-6.77zM14.47 3.12a1 1 0 0 0-1 0L7 7.57H2a1 1 0 0 0-1 1v6.86a1 1 0 0 0 1 1h5l6.41 4.4A1.06 1.06 0 0 0 14 21a1 1 0 0 0 1-1V4a1 1 0 0 0-.53-.88z"/></svg>
+              <svg class="icon-mute" xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 24 24"><path d="M16.91 14.08l1.44 1.44a6 6 0 0 0-.07-7.15 1 1 0 1 0-1.56 1.26 4 4 0 0 1 .19 4.45z"/><path d="M21 12a6.51 6.51 0 0 1-1.78 4.39l1.42 1.42A8.53 8.53 0 0 0 23 12a8.75 8.75 0 0 0-3.36-6.77 1 1 0 1 0-1.28 1.54A6.8 6.8 0 0 1 21 12zM15 12.17V4a1 1 0 0 0-1.57-.83L9 6.2zM4.74 7.57H2a1 1 0 0 0-1 1v6.86a1 1 0 0 0 1 1h5l6.41 4.4A1.06 1.06 0 0 0 14 21a1 1 0 0 0 1-1v-2.17zM4.71 3.29a1 1 0 0 0-1.42 1.42l16 16a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"/></svg>
+            </button>
+            <input type="range" class="form-range" min="0" max="80" step="1" value="80" id="volume-range">
+          </div>
+          <div>
+            <button id="reset-speed" type="button" class="btn btn-link btn-lg" title="Reset speed">
+              <i class="fas fa-forward"></i>
+            </button>
+            <input type="range" class="form-range" min="50" max="150" step="1" value="100" id="speed-range">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Track list -->
+    <div class="row pb-3 row-cols-1 row-cols-md-2 row-cols-lg-4 justify-content-center" id="tracklist"></div>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/howler@2.2.1/dist/howler.min.js" integrity="sha256-Z6YgsC4qiy8o007mNQmCgSXEmS8CGtzwXi6rzyP/ZiE=" crossorigin="anonymous"></script>
+  <script>
+  
+    let mainTitle = "Mary Had A Little Lamb (TW Beg L1)";
+    let mainAuthor = "John O'Brien";
+
+    let tracks = [
+      {
+        url: 'https://music-audio-files.s3.amazonaws.com/T1+-+MHall+P1/TW+BEG+T1+MHaLL+Pt+1+-+Sop+D+%26+CT-+MAST.mp3',
+        img: 'https://blog.mcneelamusic.com/wp-content/uploads/2020/11/Setanta-ScrnGrab-Amazon.png',
+        title: "Tin Whistle",
+        author: "John O'Brien"
+      },
+      {
+        url: 'https://music-audio-files.s3.amazonaws.com/T1+-+MHall+P1/TW+BEG+T1+MHaLL+Pt+1+-+LOW+D+-+MAST.mp3',
+        img: 'https://blog.mcneelamusic.com/wp-content/uploads/2020/11/Setanta-Grab.png',
+        title: "Low Whistle",
+        author: "John O'Brien"
+      },
+      {
+        url: 'https://music-audio-files.s3.amazonaws.com/T1+-+MHall+P1/TW+BEG+T1+MHaLL+Pt+1+-+Pipes+-+MAST.mp3',
+        img: 'https://blog.mcneelamusic.com/wp-content/uploads/2020/11/Uilleann-Pipes-ScrnGrab.png',
+        title: "Uilleann Pipes",
+        author: "John O'Brien"
+      },
+      {
+        url: 'https://music-audio-files.s3.amazonaws.com/T1+-+MHall+P1/TW+BEG+T1+MHaLL+Pt+1+-+Bodhr%C3%A1n+-+MAST.mp3',
+        img: 'https://blog.mcneelamusic.com/wp-content/uploads/2020/11/Bodhran-ScrnGrab.png',
+        title: "Bodhrán",
+        author: "John O'Brien"
+      },
+      {
+        url: 'https://music-audio-files.s3.amazonaws.com/T1+-+MHall+P1/TW+BEG+T1+MHaLL+Pt+1+-+BOUZ+-+MAST.mp3',
+        img: 'https://blog.mcneelamusic.com/wp-content/uploads/2020/11/Bouzouki-ScrnGrab.png',
+        title: "Bouzouki",
+        author: "John O'Brien"
+      },
+      {
+        url: 'https://music-audio-files.s3.amazonaws.com/T1+-+MHall+P1/TW+BEG+T1+MHaLL+Pt+1+-+GTR+-+MAST.mp3',
+        img: 'https://blog.mcneelamusic.com/wp-content/uploads/2020/11/Guitar-ScrnGrab.png',
+        title: "Guitar",
+        author: "John O'Brien"
+      },
+      {
+        url: 'https://music-audio-files.s3.amazonaws.com/T1+-+MHall+P1/TW+BEG+T1+MHaLL+Pt+1+-+KEYS+-+MAST.mp3',
+        img: 'https://blog.mcneelamusic.com/wp-content/uploads/2020/11/Pianist-ScrnGrab.png',
+        title: "Piano",
+        author: "John O'Brien"
+      }
+      /*
+      {
+        url: '../audio/GuitarTest.mp3',
+        img: 'https://blog.mcneelamusic.com/wp-content/uploads/2020/09/Tin-Whistle.png',
+        title: "Tin Whistle",
+        author: "John O'Brien"
+      },
+      {
+        url: '../audio/BodhranTest.mp3',
+        img: 'https://blog.mcneelamusic.com/wp-content/uploads/2020/09/Bodhran.png',
+        title: "Bouzouki",
+        author: "John O'Brien"
+      },
+      {
+        url: '../audio/BouzTest.mp3',
+        img: 'https://blog.mcneelamusic.com/wp-content/uploads/2020/09/Bouzouki.png',
+        title: "Bodhra",
+        author: "John O'Brien"
+      },
+      {
+        url: '../audio/PianoTest.mp3',
+        img: 'https://blog.mcneelamusic.com/wp-content/uploads/2020/09/Low-Whistle.png',
+        title: "Low Whistle",
+        author: "John O'Brien"
+      }*/
+    ];
+
+    let players = [];
+    let howl;
+
+    let progress = 0;
+    let duration = 0;
+    let volume = 80;
+    let speed = 100;
+    let isPlaying = false;
+    let isLoopEnabled = false;
+    let isAllMuted = false;
+    let playable = false;
+    let firstTime = true;
+    let progressInterval;
+
+    const loadAudioFiles = () => {
+      howl = new Howl({
+        src: tracks.map(track => track.url),
+        loop: false,
+        volume: volume / 100
+      });
+    }
+
+    const playPauseAll = () => {
+      if (isPlaying)
+        howl.pause()
+      else
+        howl.play()
+      isPlaying = !isPlaying;
+    }
+
+    const playPauseAllCore = () => {
+      
+    }
+
+    const muteAll = () => {
+      
+    }
+
+    const toggleLoop = () => {
+      
+    }
+
+    const changeVolume = () => {
+      
+    }
+
+    const changeSpeed = () => {
+      
+    }
+
+    const restoreSpeed = () => {
+      
+    }
+
+    const checkIfPlayable = () => {
+      
+    }
+
+    const parseDuration = () => {
+      let min, sec, out;
+      if (duration > 59) {
+        min = Math.round(duration / 60);
+        sec = Math.round(duration % 60);
+      } else {
+        min = 0;
+        sec = Math.round(duration);
+      }
+      out = twoDigits(min) + ":" + twoDigits(sec);
+      document.getElementById("duration-string").innerHTML = out;
+      document.getElementById("progress-range").setAttribute('max', Math.round(duration));
+    }
+
+    const parseProgress = () => {
+      let min, sec, out;
+      if (progress > 59) {
+        min = Math.round(progress / 60);
+        sec = Math.round(progress % 60);
+      } else {
+        min = 0;
+        sec = Math.round(progress);
+      }
+      out = twoDigits(min) + ":" + twoDigits(sec);
+      document.getElementById("progress-string").innerHTML = out;
+      document.getElementById("progress-range").value = Math.round(progress);
+    }
+
+    const scrubProgress = () => {
+      progress = document.getElementById("progress-range").value;
+      players.forEach(player => {
+        player.currentTime = progress;
+      });
+      parseProgress();
+    }
+
+    const twoDigits = n => {
+      return (n < 10 ? '0' : '') + n;
+    }
+
+    const cleanup = () => {
+      
+    }
+
+    const createTrackItem = (track, i) => {
+      let out = `
+        <div class="col">
+          <div class="track">
+            <div class="track-img">
+              <img src="${track.img}">
+            </div>
+            <div class="track-info">
+              <h3>${track.title}</h3>
+              <h4>${track.author}</h4>
+            </div>
+            <div class="track-mute">
+              <button id="toggle-volume-${i}" type="button" class="btn btn-link btn-lg" data-bs-toggle="button" title="Mute">
+                <svg class="icon-volume" xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 24 24"><path d="M18.28 8.37a1 1 0 1 0-1.56 1.26 4 4 0 0 1 0 4.74A1 1 0 0 0 17.5 16a1 1 0 0 0 .78-.37 6 6 0 0 0 0-7.26z"/><path d="M19.64 5.23a1 1 0 1 0-1.28 1.54A6.8 6.8 0 0 1 21 12a6.8 6.8 0 0 1-2.64 5.23 1 1 0 0 0-.13 1.41A1 1 0 0 0 19 19a1 1 0 0 0 .64-.23A8.75 8.75 0 0 0 23 12a8.75 8.75 0 0 0-3.36-6.77zM14.47 3.12a1 1 0 0 0-1 0L7 7.57H2a1 1 0 0 0-1 1v6.86a1 1 0 0 0 1 1h5l6.41 4.4A1.06 1.06 0 0 0 14 21a1 1 0 0 0 1-1V4a1 1 0 0 0-.53-.88z"/></svg>
+                <svg class="icon-mute" xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 24 24"><path d="M16.91 14.08l1.44 1.44a6 6 0 0 0-.07-7.15 1 1 0 1 0-1.56 1.26 4 4 0 0 1 .19 4.45z"/><path d="M21 12a6.51 6.51 0 0 1-1.78 4.39l1.42 1.42A8.53 8.53 0 0 0 23 12a8.75 8.75 0 0 0-3.36-6.77 1 1 0 1 0-1.28 1.54A6.8 6.8 0 0 1 21 12zM15 12.17V4a1 1 0 0 0-1.57-.83L9 6.2zM4.74 7.57H2a1 1 0 0 0-1 1v6.86a1 1 0 0 0 1 1h5l6.41 4.4A1.06 1.06 0 0 0 14 21a1 1 0 0 0 1-1v-2.17zM4.71 3.29a1 1 0 0 0-1.42 1.42l16 16a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+      let tracklist = document.getElementById('tracklist');
+      tracklist.innerHTML = tracklist.innerHTML + out;
+    }
+
+    const assignMuteButtons = i => {
+      document.getElementById(`toggle-volume-${i}`).addEventListener('click', () => {
+          
+      });
+    }
+
+    window.addEventListener('load', loadAudioFiles);
+    window.addEventListener('beforeunload', cleanup);
+    document.querySelectorAll('.section-list a.item').forEach(a => {
+      a.addEventListener('click', cleanup);
+    })
+    document.getElementById("toggle-play").addEventListener('click', playPauseAll);
+    document.getElementById("toggle-loop").addEventListener('click', toggleLoop);
+    document.getElementById("toggle-volume").addEventListener('click', muteAll);
+    document.getElementById("reset-speed").addEventListener('click', restoreSpeed);
+    document.getElementById("volume-range").addEventListener('input', changeVolume);
+    document.getElementById("speed-range").addEventListener('input', changeSpeed);
+    document.getElementById("progress-range").addEventListener('input', scrubProgress);
+  </script>
+</body>
+</html>
