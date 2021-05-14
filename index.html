@@ -446,6 +446,9 @@
       to.on('timeupdate', () => {
         let current = to.query();
         if (current.position >= duration) {
+          console.log(current);
+          console.log(duration);
+          console.log('reset');
           if (isLoopEnabled)
             to.update({ position: 0, velocity: speed / 100 });
           else
@@ -477,7 +480,8 @@
 
     const scrubProgress = () => {
       progress = document.getElementById("progress-range").value;
-      to.update({ position: progress });
+      console.log(progress);
+      to.update({ position: parseInt(progress) });
       parseProgress();
     }
 
