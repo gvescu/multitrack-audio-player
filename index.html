@@ -103,6 +103,8 @@
     #toggle-play.active i.fa-play { display: none; }
     #toggle-play i.fa-pause { display: none; }
     #toggle-play.active i.fa-pause { display: inline-block; }
+    #toggle-play i.fa-spinner { display: none; }
+    #toggle-play.active i.fa-spinner { display: none; }
     #toggle-loop svg {
       height: 1.7rem;
     }
@@ -317,6 +319,7 @@
       tracks.forEach(track => {
         let audio = new Audio();
         audio.src = track.url;
+        audio.preload = true;
         audio.volume = 0.8;
         audio.controls = false;
         audio.autoplay = false;
@@ -339,6 +342,7 @@
             document.getElementById("toggle-play").classList.remove('active');
           }
         });
+        audio.load();
         players.push(audio);
       });
       document.querySelectorAll("#song-info h1, #song-info-hud h1").forEach(i => i.innerHTML = mainTitle);
@@ -355,7 +359,7 @@
       if (firstTime) {
         preload();
         firstTime = false;
-      } 
+      }
       playPauseAllCore();
     }
 
