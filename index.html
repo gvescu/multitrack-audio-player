@@ -450,6 +450,8 @@
           else
             to.update({ position: 0 })
         }
+        progress = Math.round(current.position);
+        parseProgress();
       });
       playersSynced = [];
       players.forEach(player => {
@@ -474,9 +476,7 @@
 
     const scrubProgress = () => {
       progress = document.getElementById("progress-range").value;
-      players.forEach(player => {
-        player.currentTime = progress;
-      });
+      to.update({ position: progress });
       parseProgress();
     }
 
