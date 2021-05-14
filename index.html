@@ -405,15 +405,11 @@
 
     const changeSpeed = () => {
       speed = parseInt(document.getElementById("speed-range").value);
-      players.forEach(player => {
-        player.playbackRate = speed / 100;
-      });
+      to.update({ velocity: speed / 100 });
     }
 
     const restoreSpeed = () => {
-      players.forEach(player => {
-        player.playbackRate = 1;
-      });
+      to.update({ velocity: 1 });
       document.getElementById("speed-range").value = 100;
     }
 
@@ -480,9 +476,8 @@
     }
 
     const scrubProgress = () => {
-      progress = document.getElementById("progress-range").value;
-      console.log(progress);
-      to.update({ position: parseInt(progress) });
+      progress = parseInt(document.getElementById("progress-range").value);
+      to.update({ position: progress });
       parseProgress();
     }
 
