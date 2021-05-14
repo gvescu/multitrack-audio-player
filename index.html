@@ -327,6 +327,9 @@
             parseDuration();
           }
         });
+        audio.addEventListener('canplaythrough', () => {
+          console.log('Audio ready!');
+        });
         audio.addEventListener('ended', () => {
           if (!isLoopEnabled) {
             audio.pause();
@@ -417,9 +420,6 @@
         player.pause();
         player.currentTime = 0;
       });
-      while (!playersReady.every(Boolean)) {
-        playersReady = players.map(player => player.readyState >= 2 ? true : false)
-      }
     }
 
     const parseDuration = () => {

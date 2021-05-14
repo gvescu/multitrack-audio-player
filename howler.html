@@ -363,7 +363,14 @@
           preload: true,
           loop: false,
           volume: volume / 100,
-          html5: true
+          html5: true,
+          onend: () => {
+            if (!isLoopEnabled) {
+              progress = 0;
+              isPlaying = false;
+              document.getElementById("toggle-play").classList.remove('active');
+            }
+          }
         });
         players.push(player);
       });
