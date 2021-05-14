@@ -505,6 +505,17 @@
       );
     }
 
+    const safariFix = () => {
+      if (players.length > 0) {
+        players.forEach(player => {
+          player.play();
+          player.pause();
+          player.currentTime = 0;
+        });
+      }
+    }
+
+    document.body.addEventListener('touchstart', safariFix, false);
     window.addEventListener('load', loadAudioFiles);
     window.addEventListener('beforeunload', cleanup);
     document.querySelectorAll('.section-list a.item').forEach(a => {
