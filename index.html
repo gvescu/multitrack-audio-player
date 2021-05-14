@@ -410,10 +410,8 @@
     }
 
     const checkIfPlayable = () => {
-      players.forEach(player => {
-        if (player.readyState <= 2) return false;
-      });
-      return true;
+      let loaded = players.map(player => player.readyState <= 1 ? false : true);
+      return loaded.every(Boolean);
     }
 
     const parseDuration = () => {
