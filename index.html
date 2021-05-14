@@ -318,8 +318,8 @@
     const loadAudioFiles = () => {
       tracks.forEach(track => {
         let audio = new Audio();
+        audio.preload = 'auto';
         audio.src = track.url;
-        audio.preload = true;
         audio.volume = 0.8;
         audio.controls = false;
         audio.autoplay = false;
