@@ -356,6 +356,10 @@
     }
 
     const playPauseAll = () => {
+      if (firstTime) {
+        preload();
+        firstTime = false;
+      }
       playPauseAllCore();
     }
 
@@ -419,6 +423,7 @@
         player.pause();
         player.currentTime = 0;
       });
+      initializeSync();
     }
 
     const parseDuration = () => {
@@ -446,6 +451,7 @@
             to.update({ position: 0 })
         }
       });
+      playersSynced = [];
       players.forEach(player => {
         let sync = MCorp.mediaSync(player, to);
         playersSynced.push(sync);
