@@ -442,6 +442,7 @@
     }
 
     const initializeSync = () => {
+      to = null;
       to = new TIMINGSRC.TimingObject({range:[0,duration]});
       to.on('timeupdate', () => {
         let current = to.query();
