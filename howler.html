@@ -228,7 +228,7 @@
               <svg class="icon-volume" xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 24 24"><path d="M18.28 8.37a1 1 0 1 0-1.56 1.26 4 4 0 0 1 0 4.74A1 1 0 0 0 17.5 16a1 1 0 0 0 .78-.37 6 6 0 0 0 0-7.26z"/><path d="M19.64 5.23a1 1 0 1 0-1.28 1.54A6.8 6.8 0 0 1 21 12a6.8 6.8 0 0 1-2.64 5.23 1 1 0 0 0-.13 1.41A1 1 0 0 0 19 19a1 1 0 0 0 .64-.23A8.75 8.75 0 0 0 23 12a8.75 8.75 0 0 0-3.36-6.77zM14.47 3.12a1 1 0 0 0-1 0L7 7.57H2a1 1 0 0 0-1 1v6.86a1 1 0 0 0 1 1h5l6.41 4.4A1.06 1.06 0 0 0 14 21a1 1 0 0 0 1-1V4a1 1 0 0 0-.53-.88z"/></svg>
               <svg class="icon-mute" xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 24 24"><path d="M16.91 14.08l1.44 1.44a6 6 0 0 0-.07-7.15 1 1 0 1 0-1.56 1.26 4 4 0 0 1 .19 4.45z"/><path d="M21 12a6.51 6.51 0 0 1-1.78 4.39l1.42 1.42A8.53 8.53 0 0 0 23 12a8.75 8.75 0 0 0-3.36-6.77 1 1 0 1 0-1.28 1.54A6.8 6.8 0 0 1 21 12zM15 12.17V4a1 1 0 0 0-1.57-.83L9 6.2zM4.74 7.57H2a1 1 0 0 0-1 1v6.86a1 1 0 0 0 1 1h5l6.41 4.4A1.06 1.06 0 0 0 14 21a1 1 0 0 0 1-1v-2.17zM4.71 3.29a1 1 0 0 0-1.42 1.42l16 16a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"/></svg>
             </button>
-            <input type="range" class="form-range" min="0" max="80" step="1" value="80" id="volume-range">
+            <input type="range" class="form-range" min="0" max="60" step="1" value="60" id="volume-range">
           </div>
           <div>
             <button id="reset-speed" type="button" class="btn btn-link btn-lg" title="Reset speed">
@@ -299,43 +299,43 @@
 
     let tracks = [
       {
-        url: 'https://music-audio-files.s3.amazonaws.com/T1+-+MHall+P1/TW+BEG+T1+MHaLL+Pt+1+-+Sop+D+%26+CT-+MAST.mp3',
+        url: './audio/TW+BEG+T1+MHaLL+Pt+1+-+Sop+D+%26+CT-+MAST.mp3',
         img: 'https://blog.mcneelamusic.com/wp-content/uploads/2020/11/Setanta-ScrnGrab-Amazon.png',
         title: "Tin Whistle",
         author: "John O'Brien"
       },
       {
-        url: 'https://music-audio-files.s3.amazonaws.com/T1+-+MHall+P1/TW+BEG+T1+MHaLL+Pt+1+-+LOW+D+-+MAST.mp3',
+        url: './audio/TW+BEG+T1+MHaLL+Pt+1+-+LOW+D+-+MAST.mp3',
         img: 'https://blog.mcneelamusic.com/wp-content/uploads/2020/11/Setanta-Grab.png',
         title: "Low Whistle",
         author: "John O'Brien"
       },
       {
-        url: 'https://music-audio-files.s3.amazonaws.com/T1+-+MHall+P1/TW+BEG+T1+MHaLL+Pt+1+-+Pipes+-+MAST.mp3',
+        url: './audio/TW+BEG+T1+MHaLL+Pt+1+-+Pipes+-+MAST.mp3',
         img: 'https://blog.mcneelamusic.com/wp-content/uploads/2020/11/Uilleann-Pipes-ScrnGrab.png',
         title: "Uilleann Pipes",
         author: "John O'Brien"
       },
       {
-        url: 'https://music-audio-files.s3.amazonaws.com/T1+-+MHall+P1/TW+BEG+T1+MHaLL+Pt+1+-+Bodhr%C3%A1n+-+MAST.mp3',
+        url: './audio/TW+BEG+T1+MHaLL+Pt+1+-+Bodhr%C3%A1n+-+MAST.mp3',
         img: 'https://blog.mcneelamusic.com/wp-content/uploads/2020/11/Bodhran-ScrnGrab.png',
         title: "Bodhrán",
         author: "John O'Brien"
       },
       {
-        url: 'https://music-audio-files.s3.amazonaws.com/T1+-+MHall+P1/TW+BEG+T1+MHaLL+Pt+1+-+BOUZ+-+MAST.mp3',
+        url: './audio/TW+BEG+T1+MHaLL+Pt+1+-+BOUZ+-+MAST.mp3',
         img: 'https://blog.mcneelamusic.com/wp-content/uploads/2020/11/Bouzouki-ScrnGrab.png',
         title: "Bouzouki",
         author: "John O'Brien"
       },
       {
-        url: 'https://music-audio-files.s3.amazonaws.com/T1+-+MHall+P1/TW+BEG+T1+MHaLL+Pt+1+-+GTR+-+MAST.mp3',
+        url: './audio/TW+BEG+T1+MHaLL+Pt+1+-+GTR+-+MAST.mp3',
         img: 'https://blog.mcneelamusic.com/wp-content/uploads/2020/11/Guitar-ScrnGrab.png',
         title: "Guitar",
         author: "John O'Brien"
       },
       {
-        url: 'https://music-audio-files.s3.amazonaws.com/T1+-+MHall+P1/TW+BEG+T1+MHaLL+Pt+1+-+KEYS+-+MAST.mp3',
+        url: './audio/TW+BEG+T1+MHaLL+Pt+1+-+KEYS+-+MAST.mp3',
         img: 'https://blog.mcneelamusic.com/wp-content/uploads/2020/11/Pianist-ScrnGrab.png',
         title: "Piano",
         author: "John O'Brien"
@@ -347,7 +347,7 @@
 
     let progress = 0;
     let duration = 0;
-    let volume = 80;
+    let volume = 60;
     let speed = 100;
     let isPlaying = false;
     let isLoopEnabled = false;
@@ -363,7 +363,6 @@
           preload: true,
           loop: false,
           volume: volume / 100,
-          html5: true,
           onend: () => {
             if (!isLoopEnabled) {
               progress = 0;
