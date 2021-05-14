@@ -346,14 +346,7 @@
 
     const playPauseAll = () => {
       if (checkIfPlayable()) {
-        if (!isPlaying && progress === 0) {
-          players.forEach(player => {
-            player.play();
-            player.pause();
-            player.currentTime = 0;
-          });
-        }
-          playPauseAllCore();
+        playPauseAllCore();
       } else {
         document.getElementById("toggle-play").classList.remove('active');
         alert("Please wait for all the tracks to be loaded");
