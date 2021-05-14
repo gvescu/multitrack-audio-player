@@ -300,6 +300,7 @@
     ];
 
     let players = [];
+    let playersReady = tracks.map(() => false);
 
     let progress = 0;
     let duration = 0;
@@ -350,11 +351,9 @@
     const playPauseAll = () => {
       if (firstTime) {
         preload();
-        setTimeout(playPauseAllCore, 1000);
         firstTime = false;
-      } else {
-        playPauseAllCore();
-      }
+      } 
+      playPauseAllCore();
     }
 
     const playPauseAllCore = () => {
@@ -418,12 +417,9 @@
         player.pause();
         player.currentTime = 0;
       });
-    }
-
-    const checkIfPlayable = () => {
-      let loaded = players.map(player => player.readyState <= 1 ? false : true);
-      console.log(loaded);
-      return loaded.every(Boolean);
+      while (!playersReady.every(Boolean)) {
+        playersReady = players.map(player => player.readyState >= 2 ? true : false)
+      }
     }
 
     const parseDuration = () => {

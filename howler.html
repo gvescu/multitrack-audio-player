@@ -298,6 +298,7 @@
     ];
 
     let players = [];
+    let playerReady = tracks.map(() => false);
 
     let progress = 0;
     let duration = 0;
@@ -323,6 +324,12 @@
     }
 
     const playPauseAll = () => {
+      if (firstTime) {
+        while (!playerReady.every(Boolean)) {
+          playerReady = players.map(player => player.state() === 'loaded' ? true : false)
+        }
+        firstTime = false;
+      }
       players.forEach(player => {
         if (isPlaying)
           player.pause()
