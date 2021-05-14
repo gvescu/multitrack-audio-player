@@ -309,7 +309,7 @@
 
     let progress = 0;
     let duration = 0;
-    let volume = 80;
+    let volume = 60;
     let speed = 100;
     let isPlaying = false;
     let isLoopEnabled = false;
@@ -323,7 +323,7 @@
       tracks.forEach(track => {
         let audio = new Audio();
         audio.preload = 'auto';
-        audio.volume = volume / 100;
+        audio.volume = 0.6;
         audio.controls = false;
         audio.autoplay = false;
         audio.addEventListener('loadeddata', () => {
@@ -364,16 +364,6 @@
     }
 
     const playPauseAllCore = () => {
-      /*players.forEach(player => {
-        if (isPlaying)
-          player.pause();
-        else
-          player.play();
-      });
-      progressInterval = setInterval(() => {
-        progress = players[0].currentTime;
-        parseProgress();
-      }, 100);*/
       if (isPlaying)
         to.update({ velocity: 0.0 });
       else {
@@ -419,8 +409,6 @@
         player.pause();
         player.currentTime = 0;
       });
-      if (to.range[1] === 0)
-        initializeSync();
     }
 
     const parseDuration = () => {
@@ -438,7 +426,6 @@
     }
 
     const initializeSync = () => {
-      to = null;
       to = new TIMINGSRC.TimingObject({range:[0,duration]});
       to.on('timeupdate', () => {
         let current = to.query();
