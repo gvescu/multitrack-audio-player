@@ -345,22 +345,33 @@
     }
 
     const playPauseAll = () => {
-      if (checkIfPlayable) {
-        players.forEach(player => {
-          if (isPlaying)
-            player.pause();
-          else
+      if (checkIfPlayable()) {
+        if (!isPlaying && progress === 0) {
+          players.forEach(player => {
             player.play();
-        });
-        progressInterval = setInterval(() => {
-          progress = players[0].currentTime;
-          parseProgress();
-        }, 100);
-        isPlaying = !isPlaying;
+            player.pause();
+            player.currentTime = 0;
+          });
+        }
+          playPauseAllCore();
       } else {
         document.getElementById("toggle-play").classList.remove('active');
         alert("Please wait for all the tracks to be loaded");
       }
+    }
+
+    const playPauseAllCore = () => {
+      players.forEach(player => {
+        if (isPlaying)
+          player.pause();
+        else
+          player.play();
+      });
+      progressInterval = setInterval(() => {
+        progress = players[0].currentTime;
+        parseProgress();
+      }, 100);
+      isPlaying = !isPlaying;
     }
 
     const muteAll = () => {
