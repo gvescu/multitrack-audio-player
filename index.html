@@ -423,7 +423,8 @@
         player.pause();
         player.currentTime = 0;
       });
-      initializeSync();
+      if (to.range[1] === 0)
+        initializeSync();
     }
 
     const parseDuration = () => {
