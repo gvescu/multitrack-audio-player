@@ -191,6 +191,8 @@
       font-size: 0.8rem;
     }
   </style>
+  <script src="https://mcorp.no/lib/mediasync.js"></script>
+  <script src="https://webtiming.github.io/timingsrc/lib/timingsrc-v3.js"></script>
 
 </head>
 <body>
@@ -303,6 +305,7 @@
 
     let players = [];
     let playersReady = tracks.map(() => false);
+    let playersSynced = [];
 
     let progress = 0;
     let duration = 0;
@@ -314,6 +317,7 @@
     let playable = false;
     let firstTime = true;
     let progressInterval;
+    let to;
 
     const loadAudioFiles = () => {
       tracks.forEach(track => {
@@ -329,15 +333,10 @@
             parseDuration();
           }
         });
-        audio.addEventListener('canplaythrough', () => {
-          console.log('Audio ready!');
-        });
         audio.addEventListener('ended', () => {
           if (!isLoopEnabled) {
-            audio.pause();
-            audio.currentTime = 0;
-            progress = 0;
             isPlaying = false;
+            to.update({ position: 0, velocity: 0 });
             document.getElementById("toggle-play").classList.remove('active');
           }
         });
@@ -353,6 +352,7 @@
       tracks.forEach((track, i) => {
         assignMuteButtons(i);
       });
+      initializeSync();
     }
 
     const playPauseAll = () => {
@@ -364,7 +364,7 @@
     }
 
     const playPauseAllCore = () => {
-      players.forEach(player => {
+      /*players.forEach(player => {
         if (isPlaying)
           player.pause();
         else
@@ -373,7 +373,12 @@
       progressInterval = setInterval(() => {
         progress = players[0].currentTime;
         parseProgress();
-      }, 100);
+      }, 100);*/
+      if (isPlaying)
+        to.update({ velocity: 0.0 });
+      else {
+        to.update({ velocity: speed / 100 });
+      }
       isPlaying = !isPlaying;
     }
 
@@ -388,12 +393,6 @@
     }
 
     const toggleLoop = () => {
-      players.forEach(player => {
-        if (isLoopEnabled)
-          player.loop = false;
-        else
-          player.loop = true;
-      });
       isLoopEnabled = !isLoopEnabled;
     }
 
@@ -438,6 +437,23 @@
       out = twoDigits(min) + ":" + twoDigits(sec);
       document.getElementById("duration-string").innerHTML = out;
       document.getElementById("progress-range").setAttribute('max', Math.round(duration));
+    }
+
+    const initializeSync = () => {
+      to = new TIMINGSRC.TimingObject({range:[0,duration]});
+      to.on('timeupdate', () => {
+        let current = to.query();
+        if (current.position >= duration) {
+          if (isLoopEnabled)
+            to.update({ position: 0, velocity: speed / 100 });
+          else
+            to.update({ position: 0 })
+        }
+      });
+      players.forEach(player => {
+        let sync = MCorp.mediaSync(player, to);
+        playersSynced.push(sync);
+      });
     }
 
     const parseProgress = () => {
@@ -529,5 +545,6 @@
     document.getElementById("speed-range").addEventListener('input', changeSpeed);
     document.getElementById("progress-range").addEventListener('input', scrubProgress);
   </script>
+
 </body>
 </html>
