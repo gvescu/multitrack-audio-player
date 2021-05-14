@@ -308,7 +308,8 @@
     let isPlaying = false;
     let isLoopEnabled = false;
     let isAllMuted = false;
-    let safariTouchFix = true;
+    let playable = false;
+    let firstTime = true;
     let progressInterval;
 
     const loadAudioFiles = () => {
@@ -320,7 +321,8 @@
         audio.autoplay = false;
         audio.addEventListener('loadeddata', () => {
           if (audio.readyState >= 2) {
-            duration = audio.duration;
+            if (audio.duration > duration)
+              duration = audio.duration;
             parseDuration();
           }
         });
@@ -346,11 +348,12 @@
     }
 
     const playPauseAll = () => {
-      if (checkIfPlayable()) {
-        playPauseAllCore();
+      if (firstTime) {
+        preload();
+        setTimeout(playPauseAllCore, 1000);
+        firstTime = false;
       } else {
-        document.getElementById("toggle-play").classList.remove('active');
-        alert("Please wait for all the tracks to be loaded");
+        playPauseAllCore();
       }
     }
 
@@ -409,8 +412,17 @@
       document.getElementById("speed-range").value = 100;
     }
 
+    const preload = () => {
+      players.forEach(player => {
+        player.play();
+        player.pause();
+        player.currentTime = 0;
+      });
+    }
+
     const checkIfPlayable = () => {
       let loaded = players.map(player => player.readyState <= 1 ? false : true);
+      console.log(loaded);
       return loaded.every(Boolean);
     }
 
@@ -504,18 +516,6 @@
       );
     }
 
-    const safariFix = () => {
-      if (players.length > 0 && safariTouchFix) {
-        players.forEach(player => {
-          player.play();
-          player.pause();
-          player.currentTime = 0;
-        });
-        safariTouchFix = false;
-      }
-    }
-
-    document.body.addEventListener('touchstart', safariFix, false);
     window.addEventListener('load', loadAudioFiles);
     window.addEventListener('beforeunload', cleanup);
     document.querySelectorAll('.section-list a.item').forEach(a => {
