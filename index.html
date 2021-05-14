@@ -308,6 +308,7 @@
     let isPlaying = false;
     let isLoopEnabled = false;
     let isAllMuted = false;
+    let safariTouchFix = true;
     let progressInterval;
 
     const loadAudioFiles = () => {
@@ -410,7 +411,7 @@
 
     const checkIfPlayable = () => {
       players.forEach(player => {
-        if (player.readyState >= 2) return false;
+        if (player.readyState <= 2) return false;
       });
       return true;
     }
@@ -506,12 +507,13 @@
     }
 
     const safariFix = () => {
-      if (players.length > 0) {
+      if (players.length > 0 && safariTouchFix) {
         players.forEach(player => {
           player.play();
           player.pause();
           player.currentTime = 0;
         });
+        safariTouchFix = false;
       }
     }
 
