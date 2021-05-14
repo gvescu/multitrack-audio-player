@@ -5,7 +5,6 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Multitrack Audio Player</title>
-
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" />
   <style>
@@ -16,6 +15,14 @@
       font-family: 'Play', sans-serif;
       font-family: 'Raleway', sans-serif;
       color: white;
+    }
+
+    .container-lg {
+      background-color: #3c3c3c;
+      font-family: 'Play', sans-serif;
+      font-family: 'Raleway', sans-serif;
+      color: white;
+      border-radius: 0.7rem;
     }
 
     #controls {
@@ -240,32 +247,54 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>
   <script>
-    let mainTitle = "The Stack Of Wheat";
+  
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    const audioCtx = new AudioContext();
+  
+    let mainTitle = "Mary Had A Little Lamb (TW Beg L1)";
     let mainAuthor = "John O'Brien";
 
     let tracks = [
       {
-        url: '../audio/GuitarTest.mp3',
-        img: 'https://blog.mcneelamusic.com/wp-content/uploads/2020/09/Tin-Whistle.png',
+        url: 'https://music-audio-files.s3.amazonaws.com/T1+-+MHall+P1/TW+BEG+T1+MHaLL+Pt+1+-+Sop+D+%26+CT-+MAST.mp3',
+        img: 'https://blog.mcneelamusic.com/wp-content/uploads/2020/11/Setanta-ScrnGrab-Amazon.png',
         title: "Tin Whistle",
         author: "John O'Brien"
       },
       {
-        url: '../audio/BodhranTest.mp3',
-        img: 'https://blog.mcneelamusic.com/wp-content/uploads/2020/09/Bodhran.png',
+        url: 'https://music-audio-files.s3.amazonaws.com/T1+-+MHall+P1/TW+BEG+T1+MHaLL+Pt+1+-+LOW+D+-+MAST.mp3',
+        img: 'https://blog.mcneelamusic.com/wp-content/uploads/2020/11/Setanta-Grab.png',
+        title: "Low Whistle",
+        author: "John O'Brien"
+      },
+      {
+        url: 'https://music-audio-files.s3.amazonaws.com/T1+-+MHall+P1/TW+BEG+T1+MHaLL+Pt+1+-+Pipes+-+MAST.mp3',
+        img: 'https://blog.mcneelamusic.com/wp-content/uploads/2020/11/Uilleann-Pipes-ScrnGrab.png',
+        title: "Uilleann Pipes",
+        author: "John O'Brien"
+      },
+      {
+        url: 'https://music-audio-files.s3.amazonaws.com/T1+-+MHall+P1/TW+BEG+T1+MHaLL+Pt+1+-+Bodhr%C3%A1n+-+MAST.mp3',
+        img: 'https://blog.mcneelamusic.com/wp-content/uploads/2020/11/Bodhran-ScrnGrab.png',
+        title: "Bodhrán",
+        author: "John O'Brien"
+      },
+      {
+        url: 'https://music-audio-files.s3.amazonaws.com/T1+-+MHall+P1/TW+BEG+T1+MHaLL+Pt+1+-+BOUZ+-+MAST.mp3',
+        img: 'https://blog.mcneelamusic.com/wp-content/uploads/2020/11/Bouzouki-ScrnGrab.png',
         title: "Bouzouki",
         author: "John O'Brien"
       },
       {
-        url: '../audio/BouzTest.mp3',
-        img: 'https://blog.mcneelamusic.com/wp-content/uploads/2020/09/Bouzouki.png',
-        title: "Bodhra",
+        url: 'https://music-audio-files.s3.amazonaws.com/T1+-+MHall+P1/TW+BEG+T1+MHaLL+Pt+1+-+GTR+-+MAST.mp3',
+        img: 'https://blog.mcneelamusic.com/wp-content/uploads/2020/11/Guitar-ScrnGrab.png',
+        title: "Guitar",
         author: "John O'Brien"
       },
       {
-        url: '../audio/PianoTest.mp3',
-        img: 'https://blog.mcneelamusic.com/wp-content/uploads/2020/09/Low-Whistle.png',
-        title: "Low Whistle",
+        url: 'https://music-audio-files.s3.amazonaws.com/T1+-+MHall+P1/TW+BEG+T1+MHaLL+Pt+1+-+KEYS+-+MAST.mp3',
+        img: 'https://blog.mcneelamusic.com/wp-content/uploads/2020/11/Pianist-ScrnGrab.png',
+        title: "Piano",
         author: "John O'Brien"
       }
     ];
@@ -423,6 +452,7 @@
     }
 
     const cleanup = () => {
+      console.log('calling cleanup');
       clearInterval(progressInterval);
       players.forEach(player => {
         player.pause();
@@ -472,7 +502,10 @@
     }
 
     window.addEventListener('load', loadAudioFiles);
-    window.addEventListener('unload', cleanup);
+    window.addEventListener('beforeunload', cleanup);
+    document.querySelectorAll('.section-list a.item').forEach(a => {
+      a.addEventListener('click', cleanup);
+    })
     document.getElementById("toggle-play").addEventListener('click', playPauseAll);
     document.getElementById("toggle-loop").addEventListener('click', toggleLoop);
     document.getElementById("toggle-volume").addEventListener('click', muteAll);
