@@ -341,6 +341,7 @@
           }
         });
         audio.src = track.url;
+        audio.load();
         players.push(audio);
       });
       document.querySelectorAll("#song-info h1, #song-info-hud h1").forEach(i => i.innerHTML = mainTitle);
