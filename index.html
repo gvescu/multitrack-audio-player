@@ -342,9 +342,6 @@
             parseDuration();
           }
         });
-        audio.addEventListener('paused', () => {
-          audio.currentTime = progress;
-        });
         audio.addEventListener('ended', () => {
           if (!isLoopEnabled) {
             audio.pause();
