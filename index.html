@@ -302,7 +302,6 @@
     ];
 
     let players = [];
-    let playersReady = tracks.map(() => false);
 
     let progress = 0;
     let duration = 0;
@@ -315,21 +314,8 @@
     let firstTime = true;
     let progressInterval;
 
-    const fetchFiles = () => {
-      tracks.forEach((track, i) => {
-        fetch(track.url)
-          .then(response => response.blob())
-          .then(blob => {
-            players[i].srcObject = blob;
-          })
-          .catch(e => {
-            console.log(e);
-          });
-      });
-    }
-
     const loadAudioFiles = () => {
-      tracks.forEach(track => {
+      tracks.forEach((track, i) => {
         let audio = new Audio();
         audio.preload = 'auto';
         audio.volume = volume / 100;
