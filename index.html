@@ -372,12 +372,12 @@
         console.log('firstTime');
         document.getElementById("pause-spinner-combo").setAttribute('class', '');
         document.getElementById("pause-spinner-combo").classList.add('fas', 'fa-spinner', 'fa-lg', 'fa-spin');
+        players.forEach(player => {
+          player.play();
+          player.pause();
+          player.currentTime = 0;
+        });
         setTimeout(() => {
-          players.forEach(player => {
-            player.play();
-            player.pause();
-            player.currentTime = 0;
-          });
           document.getElementById("pause-spinner-combo").setAttribute('class', '');
           document.getElementById("pause-spinner-combo").classList.add('fas', 'fa-pause', 'fa-lg');
           firstTime = false;
