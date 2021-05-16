@@ -214,7 +214,7 @@
           <input type="range" class="form-range" min="0" max="100" step="1" value="0" id="progress-range">
           <button id="toggle-play" type="button" class="btn btn-link btn-lg" data-bs-toggle="button" title="Play/Pause">
             <i class="fas fa-play fa-lg"></i>
-            <i class="fas fa-pause fa-lg"></i>
+            <i id="pause-spinner-combo" class="fas fa-pause fa-lg"></i>
           </button>
           <button id="toggle-loop" type="button" class="btn btn-link btn-lg" data-bs-toggle="button" title="Loop">
             <svg enable-background="new 0 0 511.991 511.991" version="1.1" viewBox="0 0 511.99 511.99" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
@@ -222,7 +222,7 @@
               <path d="m46.541 232.72c12.87 0 23.273-10.426 23.273-23.273 0-38.493 31.325-69.818 69.818-69.818h186.18v69.818c0 8.937 5.143 17.105 13.172 20.969 3.235 1.536 6.679 2.304 10.1 2.304 5.19 0 10.333-1.745 14.545-5.097l116.36-93.091c5.516-4.422 8.727-11.101 8.727-18.176s-3.212-13.754-8.727-18.176l-116.36-93.091c-6.982-5.585-16.617-6.656-24.646-2.793s-13.172 12.032-13.172 20.969v69.818h-186.18c-64.163 0-116.36 52.201-116.36 116.36 0 12.847 10.403 23.273 23.273 23.273z"/>
             </svg>
           </button>
-          <div id="timer"><span id="progress-string">00:00</span> / <span id="duration-string">05:00</span></div>
+          <div id="timer"><span id="progress-string">--:--</span> / <span id="duration-string">--:--</span></div>
         </div>
       </div>
       <div class="col-8 col-md-3 order-3 order-md-3 pt-3 pt-md-0" id="volume-controls">
@@ -263,53 +263,60 @@
         url: 'https://music-audio-files.s3.amazonaws.com/T1+-+MHall+P1/TW+BEG+T1+MHaLL+Pt+1+-+Sop+D+%26+CT-+MAST.mp3',
         img: 'https://blog.mcneelamusic.com/wp-content/uploads/2020/11/Setanta-ScrnGrab-Amazon.png',
         title: "Tin Whistle",
-        author: "John O'Brien"
+        author: "John O'Brien",
+        loaded: false
       },
       {
         url: 'https://music-audio-files.s3.amazonaws.com/T1+-+MHall+P1/TW+BEG+T1+MHaLL+Pt+1+-+LOW+D+-+MAST.mp3',
         img: 'https://blog.mcneelamusic.com/wp-content/uploads/2020/11/Setanta-Grab.png',
         title: "Low Whistle",
-        author: "John O'Brien"
+        author: "John O'Brien",
+        loaded: false
       },
       {
         url: 'https://music-audio-files.s3.amazonaws.com/T1+-+MHall+P1/TW+BEG+T1+MHaLL+Pt+1+-+Pipes+-+MAST.mp3',
         img: 'https://blog.mcneelamusic.com/wp-content/uploads/2020/11/Uilleann-Pipes-ScrnGrab.png',
         title: "Uilleann Pipes",
-        author: "John O'Brien"
+        author: "John O'Brien",
+        loaded: false
       },
       {
         url: 'https://music-audio-files.s3.amazonaws.com/T1+-+MHall+P1/TW+BEG+T1+MHaLL+Pt+1+-+Bodhr%C3%A1n+-+MAST.mp3',
         img: 'https://blog.mcneelamusic.com/wp-content/uploads/2020/11/Bodhran-ScrnGrab.png',
         title: "Bodhrán",
-        author: "John O'Brien"
+        author: "John O'Brien",
+        loaded: false
       },
       {
         url: 'https://music-audio-files.s3.amazonaws.com/T1+-+MHall+P1/TW+BEG+T1+MHaLL+Pt+1+-+BOUZ+-+MAST.mp3',
         img: 'https://blog.mcneelamusic.com/wp-content/uploads/2020/11/Bouzouki-ScrnGrab.png',
         title: "Bouzouki",
-        author: "John O'Brien"
+        author: "John O'Brien",
+        loaded: false
       },
       {
         url: 'https://music-audio-files.s3.amazonaws.com/T1+-+MHall+P1/TW+BEG+T1+MHaLL+Pt+1+-+GTR+-+MAST.mp3',
         img: 'https://blog.mcneelamusic.com/wp-content/uploads/2020/11/Guitar-ScrnGrab.png',
         title: "Guitar",
-        author: "John O'Brien"
+        author: "John O'Brien",
+        loaded: false
       },
       {
         url: 'https://music-audio-files.s3.amazonaws.com/T1+-+MHall+P1/TW+BEG+T1+MHaLL+Pt+1+-+KEYS+-+MAST.mp3',
         img: 'https://blog.mcneelamusic.com/wp-content/uploads/2020/11/Pianist-ScrnGrab.png',
         title: "Piano",
-        author: "John O'Brien"
+        author: "John O'Brien",
+        loaded: false
       }
     ];
 
     let players = [];
-    let playersReady = tracks.map(() => false);
     let playersSynced = [];
+    let hasPreloaded = false;
 
     let progress = 0;
     let duration = 0;
-    let volume = 60;
+    let volume = 80;
     let speed = 100;
     let isPlaying = false;
     let isLoopEnabled = false;
@@ -323,7 +330,7 @@
       tracks.forEach(track => {
         let audio = new Audio();
         audio.preload = 'auto';
-        audio.volume = 0.6;
+        audio.volume = volume / 100;
         audio.controls = false;
         audio.autoplay = false;
         audio.addEventListener('loadeddata', () => {
@@ -332,6 +339,10 @@
             duration = audio.duration;
             parseDuration();
           }
+        });
+        audio.addEventListener('canplaythrough', () => {
+          track.loaded = true;
+          console.log(track.title, '- canplaythrough');
         });
         audio.addEventListener('ended', () => {
           if (!isLoopEnabled) {
@@ -355,12 +366,17 @@
       initializeSync();
     }
 
-    const playPauseAll = () => {
+    const playPauseAll = async () => {
       if (firstTime) {
-        preload();
+        await preload();
         firstTime = false;
       }
-      playPauseAllCore();
+      if (hasPreloaded && canPlay()) {
+        playPauseAllCore();
+      } else {
+        await preload();
+        playPauseAllCore();
+      }
     }
 
     const playPauseAllCore = () => {
@@ -370,6 +386,10 @@
         to.update({ velocity: speed / 100 });
       }
       isPlaying = !isPlaying;
+    }
+
+    const canPlay = () => {
+      return tracks.map(track => track.loaded).every(Boolean);
     }
 
     const muteAll = () => {
@@ -403,12 +423,18 @@
       document.getElementById("speed-range").value = 100;
     }
 
-    const preload = () => {
-      players.forEach(player => {
-        player.play();
-        player.pause();
-        player.currentTime = 0;
+    const preload = async () => {
+      document.getElementById("pause-spinner-combo").setAttribute('class', '');
+      document.getElementById("pause-spinner-combo").classList.add('fas', 'fa-spinner', 'fa-lg', 'fa-spin');
+      players.forEach(async player => {
+        await player.load();
       });
+      await setTimeout(() => {console.log('timer done');}, 1000);
+      if (to.range[1] === 0)
+        initializeSync();
+      document.getElementById("pause-spinner-combo").setAttribute('class', '');
+      document.getElementById("pause-spinner-combo").classList.add('fas', 'fa-pause', 'fa-lg');
+      hasPreloaded = true;
     }
 
     const parseDuration = () => {
@@ -426,6 +452,7 @@
     }
 
     const initializeSync = () => {
+      to = null;
       to = new TIMINGSRC.TimingObject({range:[0,duration]});
       to.on('timeupdate', () => {
         let current = to.query();
