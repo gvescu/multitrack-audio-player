@@ -530,7 +530,6 @@
     const assignMuteButtons = i => {
       document.getElementById(`toggle-volume-${i}`).addEventListener('click', () => {
           players[i].muted = !players[i].muted;
-          players[i].currentTime = progress;
         }
       );
     }
