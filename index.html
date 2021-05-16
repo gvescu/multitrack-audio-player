@@ -103,8 +103,6 @@
     #toggle-play.active i.fa-play { display: none; }
     #toggle-play i.fa-pause { display: none; }
     #toggle-play.active i.fa-pause { display: inline-block; }
-    #toggle-play i.fa-spinner { display: none; }
-    #toggle-play.active i.fa-spinner { display: none; }
     #toggle-loop svg {
       height: 1.7rem;
     }
@@ -263,60 +261,52 @@
         url: 'https://music-audio-files.s3.amazonaws.com/T1+-+MHall+P1/TW+BEG+T1+MHaLL+Pt+1+-+Sop+D+%26+CT-+MAST.mp3',
         img: 'https://blog.mcneelamusic.com/wp-content/uploads/2020/11/Setanta-ScrnGrab-Amazon.png',
         title: "Tin Whistle",
-        author: "John O'Brien",
-        loaded: false
+        author: "John O'Brien"
       },
       {
         url: 'https://music-audio-files.s3.amazonaws.com/T1+-+MHall+P1/TW+BEG+T1+MHaLL+Pt+1+-+LOW+D+-+MAST.mp3',
         img: 'https://blog.mcneelamusic.com/wp-content/uploads/2020/11/Setanta-Grab.png',
         title: "Low Whistle",
-        author: "John O'Brien",
-        loaded: false
+        author: "John O'Brien"
       },
       {
         url: 'https://music-audio-files.s3.amazonaws.com/T1+-+MHall+P1/TW+BEG+T1+MHaLL+Pt+1+-+Pipes+-+MAST.mp3',
         img: 'https://blog.mcneelamusic.com/wp-content/uploads/2020/11/Uilleann-Pipes-ScrnGrab.png',
         title: "Uilleann Pipes",
-        author: "John O'Brien",
-        loaded: false
+        author: "John O'Brien"
       },
       {
         url: 'https://music-audio-files.s3.amazonaws.com/T1+-+MHall+P1/TW+BEG+T1+MHaLL+Pt+1+-+Bodhr%C3%A1n+-+MAST.mp3',
         img: 'https://blog.mcneelamusic.com/wp-content/uploads/2020/11/Bodhran-ScrnGrab.png',
         title: "Bodhrán",
-        author: "John O'Brien",
-        loaded: false
+        author: "John O'Brien"
       },
       {
         url: 'https://music-audio-files.s3.amazonaws.com/T1+-+MHall+P1/TW+BEG+T1+MHaLL+Pt+1+-+BOUZ+-+MAST.mp3',
         img: 'https://blog.mcneelamusic.com/wp-content/uploads/2020/11/Bouzouki-ScrnGrab.png',
         title: "Bouzouki",
-        author: "John O'Brien",
-        loaded: false
+        author: "John O'Brien"
       },
       {
         url: 'https://music-audio-files.s3.amazonaws.com/T1+-+MHall+P1/TW+BEG+T1+MHaLL+Pt+1+-+GTR+-+MAST.mp3',
         img: 'https://blog.mcneelamusic.com/wp-content/uploads/2020/11/Guitar-ScrnGrab.png',
         title: "Guitar",
-        author: "John O'Brien",
-        loaded: false
+        author: "John O'Brien"
       },
       {
         url: 'https://music-audio-files.s3.amazonaws.com/T1+-+MHall+P1/TW+BEG+T1+MHaLL+Pt+1+-+KEYS+-+MAST.mp3',
         img: 'https://blog.mcneelamusic.com/wp-content/uploads/2020/11/Pianist-ScrnGrab.png',
         title: "Piano",
-        author: "John O'Brien",
-        loaded: false
+        author: "John O'Brien"
       }
     ];
 
     let players = [];
-    let playersSynced = [];
-    let hasPreloaded = false;
+    let playersReady = tracks.map(() => false);
 
     let progress = 0;
     let duration = 0;
-    let volume = 80;
+    let volume = 60;
     let speed = 100;
     let isPlaying = false;
     let isLoopEnabled = false;
@@ -324,7 +314,19 @@
     let playable = false;
     let firstTime = true;
     let progressInterval;
-    let to;
+
+    const fetchFiles = () => {
+      tracks.forEach((track, i) => {
+        fetch(track.url)
+          .then(response => response.blob())
+          .then(blob => {
+            players[i].srcObject = blob;
+          })
+          .catch(e => {
+            console.log(e);
+          });
+      });
+    }
 
     const loadAudioFiles = () => {
       tracks.forEach(track => {
@@ -340,19 +342,19 @@
             parseDuration();
           }
         });
-        audio.addEventListener('canplaythrough', () => {
-          track.loaded = true;
-          console.log(track.title, '- canplaythrough');
+        audio.addEventListener('paused', () => {
+          audio.currentTime = progress;
         });
         audio.addEventListener('ended', () => {
           if (!isLoopEnabled) {
+            audio.pause();
+            audio.currentTime = 0;
+            progress = 0;
             isPlaying = false;
-            to.update({ position: 0, velocity: 0 });
             document.getElementById("toggle-play").classList.remove('active');
           }
         });
         audio.src = track.url;
-        audio.load();
         players.push(audio);
       });
       document.querySelectorAll("#song-info h1, #song-info-hud h1").forEach(i => i.innerHTML = mainTitle);
@@ -363,33 +365,41 @@
       tracks.forEach((track, i) => {
         assignMuteButtons(i);
       });
-      initializeSync();
     }
 
-    const playPauseAll = async () => {
+    const playPauseAll = () => {
       if (firstTime) {
-        await preload();
-        firstTime = false;
-      }
-      if (hasPreloaded && canPlay()) {
-        playPauseAllCore();
+        console.log('firstTime');
+        document.getElementById("pause-spinner-combo").setAttribute('class', '');
+        document.getElementById("pause-spinner-combo").classList.add('fas', 'fa-spinner', 'fa-lg', 'fa-spin');
+        setTimeout(() => {
+          players.forEach(player => {
+            player.play();
+            player.pause();
+            player.currentTime = 0;
+          });
+          document.getElementById("pause-spinner-combo").setAttribute('class', '');
+          document.getElementById("pause-spinner-combo").classList.add('fas', 'fa-pause', 'fa-lg');
+          firstTime = false;
+          playPauseAllCore();
+        }, 3000);
       } else {
-        await preload();
         playPauseAllCore();
       }
     }
 
     const playPauseAllCore = () => {
-      if (isPlaying)
-        to.update({ velocity: 0.0 });
-      else {
-        to.update({ velocity: speed / 100 });
-      }
+      players.forEach(player => {
+        if (isPlaying)
+          player.pause();
+        else
+          player.play();
+      });
+      progressInterval = setInterval(() => {
+        progress = players[0].currentTime;
+        parseProgress();
+      }, 100);
       isPlaying = !isPlaying;
-    }
-
-    const canPlay = () => {
-      return tracks.map(track => track.loaded).every(Boolean);
     }
 
     const muteAll = () => {
@@ -403,6 +413,12 @@
     }
 
     const toggleLoop = () => {
+      players.forEach(player => {
+        if (isLoopEnabled)
+          player.loop = false;
+        else
+          player.loop = true;
+      });
       isLoopEnabled = !isLoopEnabled;
     }
 
@@ -415,26 +431,16 @@
 
     const changeSpeed = () => {
       speed = parseInt(document.getElementById("speed-range").value);
-      to.update({ velocity: speed / 100 });
+      players.forEach(player => {
+        player.playbackRate = speed / 100;
+      });
     }
 
     const restoreSpeed = () => {
-      to.update({ velocity: 1 });
-      document.getElementById("speed-range").value = 100;
-    }
-
-    const preload = async () => {
-      document.getElementById("pause-spinner-combo").setAttribute('class', '');
-      document.getElementById("pause-spinner-combo").classList.add('fas', 'fa-spinner', 'fa-lg', 'fa-spin');
-      players.forEach(async player => {
-        await player.load();
+      players.forEach(player => {
+        player.playbackRate = 1;
       });
-      await setTimeout(() => {console.log('timer done');}, 1000);
-      if (to.range[1] === 0)
-        initializeSync();
-      document.getElementById("pause-spinner-combo").setAttribute('class', '');
-      document.getElementById("pause-spinner-combo").classList.add('fas', 'fa-pause', 'fa-lg');
-      hasPreloaded = true;
+      document.getElementById("speed-range").value = 100;
     }
 
     const parseDuration = () => {
@@ -448,31 +454,8 @@
       }
       out = twoDigits(min) + ":" + twoDigits(sec);
       document.getElementById("duration-string").innerHTML = out;
+      document.getElementById("progress-string").innerHTML = '00:00';
       document.getElementById("progress-range").setAttribute('max', Math.round(duration));
-    }
-
-    const initializeSync = () => {
-      to = null;
-      to = new TIMINGSRC.TimingObject({range:[0,duration]});
-      to.on('timeupdate', () => {
-        let current = to.query();
-        if (current.position >= duration) {
-          console.log(current);
-          console.log(duration);
-          console.log('reset');
-          if (isLoopEnabled)
-            to.update({ position: 0, velocity: speed / 100 });
-          else
-            to.update({ position: 0 })
-        }
-        progress = Math.round(current.position);
-        parseProgress();
-      });
-      playersSynced = [];
-      players.forEach(player => {
-        let sync = MCorp.mediaSync(player, to);
-        playersSynced.push(sync);
-      });
     }
 
     const parseProgress = () => {
@@ -490,8 +473,10 @@
     }
 
     const scrubProgress = () => {
-      progress = parseInt(document.getElementById("progress-range").value);
-      to.update({ position: progress });
+      progress = document.getElementById("progress-range").value;
+      players.forEach(player => {
+        player.currentTime = progress;
+      });
       parseProgress();
     }
 
