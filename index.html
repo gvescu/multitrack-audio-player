@@ -337,6 +337,14 @@
             document.getElementById("toggle-play").classList.remove('active');
           }
         });
+        audio.addEventListener('timeupdate', () => {
+          if (audio.currentTime === 0) {
+            console.log('call sync loop');
+            players.forEach(player => {
+              player.currentTime = 0.001;
+            });
+          }
+        });
         audio.src = track.url;
         players.push(audio);
       });
