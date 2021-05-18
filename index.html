@@ -375,12 +375,11 @@
     }
 
     const playPauseAllCore = () => {
-      players.reduce(player => {
+      players.forEach(player => {
         if (isPlaying)
           player.pause();
         else
-          player.play();
-        return true;
+          player.play()
       });
       progressInterval = setInterval(() => {
         progress = players[0].currentTime;
