@@ -368,18 +368,19 @@
           document.getElementById("pause-spinner-combo").classList.add('fas', 'fa-pause', 'fa-lg');
           firstTime = false;
           playPauseAllCore();
-        }, 4000);
+        }, 6000);
       } else {
         playPauseAllCore();
       }
     }
 
     const playPauseAllCore = () => {
-      players.forEach(player => {
+      players.reduce(player => {
         if (isPlaying)
           player.pause();
         else
           player.play();
+        return true;
       });
       progressInterval = setInterval(() => {
         progress = players[0].currentTime;
