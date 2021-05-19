@@ -318,7 +318,7 @@
     let progressInterval;
 
     const loadAudioFiles = () => {
-      tracks.forEach((track, i) => {
+      for (let t = tracks.length-1; t >= 0; t--) {
         let audio = new Audio();
         audio.preload = 'auto';
         audio.volume = volume / 100;
@@ -340,9 +340,9 @@
             document.getElementById("toggle-play").classList.remove('active');
           }
         });
-        audio.src = track.url;
+        audio.src = tracks[t].url;
         players.push(audio);
-      });
+      }
       document.querySelectorAll("#song-info h1, #song-info-hud h1").forEach(i => i.innerHTML = mainTitle);
       document.querySelectorAll("#song-info h4, #song-info-hud h4").forEach(i => i.innerHTML = mainAuthor);
       tracks.forEach((track, i) => {
@@ -358,11 +358,11 @@
         console.log('firstTime');
         document.getElementById("pause-spinner-combo").setAttribute('class', '');
         document.getElementById("pause-spinner-combo").classList.add('fas', 'fa-spinner', 'fa-lg', 'fa-spin');
-        players.forEach(player => {
-          player.play();
-          player.pause();
-          player.currentTime = 0;
-        });
+        for (let p = players.length-1; p >= 0; p--) {
+          players[p].play();
+          player[p].pause();
+          player[p].currentTime = 0;
+        }
         setTimeout(() => {
           document.getElementById("pause-spinner-combo").setAttribute('class', '');
           document.getElementById("pause-spinner-combo").classList.add('fas', 'fa-pause', 'fa-lg');
@@ -375,12 +375,12 @@
     }
 
     const playPauseAllCore = () => {
-      players.forEach(player => {
+      for (let p = players.length-1; p >= 0; p--) {
         if (isPlaying)
-          player.pause();
+          players[p].pause();
         else
-          player.play()
-      });
+          players[p].play()
+      }
       progressInterval = setInterval(() => {
         progress = players[0].currentTime;
         parseProgress();
@@ -389,42 +389,42 @@
     }
 
     const muteAll = () => {
-      players.forEach(player => {
+      for (let p = players.length-1; p >= 0; p--) {
         if (isAllMuted)
-          player.muted = false;
+          players[p].muted = false;
         else
-          player.muted = true;
-      });
+          players[p].muted = true;
+      }
       isAllMuted = !isAllMuted;
     }
 
     const toggleLoop = () => {
-      players.forEach(player => {
+      for (let p = players.length-1; p >= 0; p--) {
         if (isLoopEnabled)
-          player.loop = false;
+          players[p].loop = false;
         else
-          player.loop = true;
-      });
+          players[p].loop = true;
+      }
       isLoopEnabled = !isLoopEnabled;
     }
 
     const changeVolume = () => {
       volume = parseInt(document.getElementById("volume-range").value);
-      players.forEach(player => {
-        player.volume = volume / 100;
+      for (let p = players.length-1; p >= 0; p--) {
+        players[p].volume = volume / 100;
       });
     }
 
     const changeSpeed = () => {
       speed = parseInt(document.getElementById("speed-range").value);
-      players.forEach(player => {
-        player.playbackRate = speed / 100;
+      for (let p = players.length-1; p >= 0; p--) {
+        players[p].playbackRate = speed / 100;
       });
     }
 
     const restoreSpeed = () => {
-      players.forEach(player => {
-        player.playbackRate = 1;
+      for (let p = players.length-1; p >= 0; p--) {
+        players[p].playbackRate = 1;
       });
       document.getElementById("speed-range").value = 100;
     }
@@ -460,8 +460,8 @@
 
     const scrubProgress = () => {
       progress = document.getElementById("progress-range").value;
-      players.forEach(player => {
-        player.currentTime = progress;
+      for (let p = players.length-1; p >= 0; p--) {
+        players[p].currentTime = progress;
       });
       parseProgress();
     }
@@ -473,9 +473,9 @@
     const cleanup = () => {
       console.log('calling cleanup');
       clearInterval(progressInterval);
-      players.forEach(player => {
-        player.pause();
-        delete player;
+      for (let p = players.length-1; p >= 0; p--) {
+        players[p].pause();
+        delete players[p];
       })
       delete players;
       delete tracks;
