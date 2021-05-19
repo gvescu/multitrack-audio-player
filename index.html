@@ -345,12 +345,12 @@
       }
       document.querySelectorAll("#song-info h1, #song-info-hud h1").forEach(i => i.innerHTML = mainTitle);
       document.querySelectorAll("#song-info h4, #song-info-hud h4").forEach(i => i.innerHTML = mainAuthor);
-      tracks.forEach((track, i) => {
+      for (let t = tracks.length-1; t >= 0; t--) {
         createTrackItem(track, i);
-      });
-      tracks.forEach((track, i) => {
+      };
+      for (let t = tracks.length-1; t >= 0; t--) {
         assignMuteButtons(i);
-      });
+      };
     }
 
     const playPauseAll = () => {
