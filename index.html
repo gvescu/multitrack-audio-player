@@ -412,20 +412,20 @@
       volume = parseInt(document.getElementById("volume-range").value);
       for (let p = players.length-1; p >= 0; p--) {
         players[p].volume = volume / 100;
-      });
+      }
     }
 
     const changeSpeed = () => {
       speed = parseInt(document.getElementById("speed-range").value);
       for (let p = players.length-1; p >= 0; p--) {
         players[p].playbackRate = speed / 100;
-      });
+      }
     }
 
     const restoreSpeed = () => {
       for (let p = players.length-1; p >= 0; p--) {
         players[p].playbackRate = 1;
-      });
+      }
       document.getElementById("speed-range").value = 100;
     }
 
@@ -462,7 +462,7 @@
       progress = document.getElementById("progress-range").value;
       for (let p = players.length-1; p >= 0; p--) {
         players[p].currentTime = progress;
-      });
+      }
       parseProgress();
     }
 
@@ -476,7 +476,7 @@
       for (let p = players.length-1; p >= 0; p--) {
         players[p].pause();
         delete players[p];
-      })
+      }
       delete players;
       delete tracks;
       delete progress;
