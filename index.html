@@ -360,8 +360,8 @@
         document.getElementById("pause-spinner-combo").classList.add('fas', 'fa-spinner', 'fa-lg', 'fa-spin');
         for (let p = players.length-1; p >= 0; p--) {
           players[p].play();
-          player[p].pause();
-          player[p].currentTime = 0;
+          players[p].pause();
+          players[p].currentTime = 0;
         }
         setTimeout(() => {
           document.getElementById("pause-spinner-combo").setAttribute('class', '');
