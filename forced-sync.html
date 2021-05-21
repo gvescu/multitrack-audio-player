@@ -448,7 +448,7 @@
     }
 
     const scrubProgress = () => {
-      progress = document.getElementById("progress-range").value;
+      progress = parseInt(document.getElementById("progress-range").value);
       to.update({ position: progress });
       parseProgress();
     }
@@ -473,7 +473,13 @@
       });
       playersSynced = [];
       for (let p = 0; p < tracksLength; p++) {
-        let sync = MCorp.mediaSync(players[p], to);
+        let sync = MCorp.mediaSync(players[p], to, {
+          automute: false,
+          mode: 'vpbr',
+          debug: true,
+          target: 0.05,
+          remember: true
+        });
         playersSynced.push(sync);
       }
     }
