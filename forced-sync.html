@@ -459,7 +459,15 @@
 
     const initializeSync = () => {
       to = null;
-      to = new TIMINGSRC.TimingObject({range:[0,duration]});
+      to = new TIMINGSRC.TimingObject({
+        range:[0,duration],
+        vector: {
+          velocity: 1,
+          position: 0,
+          acceleration: 0,
+          timestamp: 0
+        }
+      });
       to.on('timeupdate', () => {
         let current = to.query();
         if (current.position >= duration) {
