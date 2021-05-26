@@ -191,6 +191,29 @@
     .track-info h4 {
       font-size: 0.8rem;
     }
+    .range-wrap {
+      position: relative;
+    }
+    .bubble {
+      background: #0d6efd;
+      color: white;
+      padding: 0px 6px;
+      position: absolute;
+      border-radius: 4px;
+      left: 50%;
+      bottom: -12px;
+      transform: translateX(-50%);
+      font-size: 0.8rem;
+    }
+    .bubble::after {
+      content: "";
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: #0d6efd;
+      top: -1px;
+      left: 50%;
+    }
   </style>
   <script src="https://mcorp.no/lib/mediasync.js"></script>
   <script src="https://webtiming.github.io/timingsrc/lib/timingsrc-v3.js"></script>
@@ -239,7 +262,12 @@
             <button id="reset-speed" type="button" class="btn btn-link btn-lg" title="Reset speed">
               <i class="fas fa-forward"></i>
             </button>
-            <input type="range" class="form-range" min="80" max="120" step="5" value="100" id="speed-range">
+            <span style="margin-right:0.5rem; font-size:0.7rem">80%</span>
+            <div class="range-wrap">
+              <input type="range" class="form-range" min="80" max="120" step="5" value="100" id="speed-range">
+              <output class="bubble" id="speed-bubble">100%</output>
+            </div>
+            <span style="margin-left:0.5rem; font-size:0.7rem">120%</span>
           </div>
         </div>
       </div>
@@ -417,17 +445,23 @@
     }
 
     const changeSpeed = () => {
-      speed = parseInt(document.getElementById("speed-select").value);
+      speed = parseInt(document.getElementById("speed-range").value);
       for (let p = 0; p < tracksLength; p++) {
         players[p].playbackRate = speed / 100;
       }
+      let range = document.getElementById("speed-range");
+      let bubble = document.getElementById("speed-bubble");
+      setBubble(range, bubble);
     }
 
     const restoreSpeed = () => {
       for (let p = 0; p < tracksLength; p++) {
         players[p].playbackRate = 1;
       }
-      document.getElementById("speed-select").value = 100;
+      document.getElementById("speed-range").value = 100;
+      let range = document.getElementById("speed-range");
+      let bubble = document.getElementById("speed-bubble");
+      setBubble(range, bubble);
     }
 
     const parseDuration = () => {
@@ -519,6 +553,17 @@
           players[i].muted = !players[i].muted;
         }
       );
+    }
+
+    const setBubble = (range, bubble) => {
+      const val = range.value;
+      const min = range.min ? range.min : 0;
+      const max = range.max ? range.max : 100;
+      const newVal = Number(((val - min) * 100) / (max - min));
+      bubble.innerHTML = val + '%';
+
+      // Sorta magic numbers based on size of the native UI thumb
+      bubble.style.left = `calc(${newVal}% + (${8 - newVal * 0.15}px))`;
     }
 
     window.addEventListener('load', loadAudioFiles);
