@@ -239,13 +239,7 @@
             <button id="reset-speed" type="button" class="btn btn-link btn-lg" title="Reset speed">
               <i class="fas fa-forward"></i>
             </button>
-            <select id="speed-select" class="form-select">
-              <option value="50">0.5x</option>
-              <option value="75">0.75x</option>
-              <option value="100" selected>1x</option>
-              <option value="125">1.25x</option>
-              <option value="150">1.5x</option>
-            </select>
+            <input type="range" class="form-range" min="50" max="150" step="5" value="100" id="speed-range">
           </div>
         </div>
       </div>
@@ -537,7 +531,7 @@
     document.getElementById("toggle-volume").addEventListener('click', muteAll);
     document.getElementById("reset-speed").addEventListener('click', restoreSpeed);
     document.getElementById("volume-range").addEventListener('input', changeVolume);
-    document.getElementById("speed-select").addEventListener('change', changeSpeed);
+    document.getElementById("speed-select").addEventListener('input', changeSpeed);
     document.getElementById("progress-range").addEventListener('input', scrubProgress);
   </script>
 
